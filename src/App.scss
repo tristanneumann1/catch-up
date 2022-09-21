@@ -1,0 +1,69 @@
+#App {
+  background-color: var(--background-color);
+  text-align: center;
+  font-family: 'Maven Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+
+  .App {
+    &-home {
+      height: 100vh;
+      min-height: 500px;
+      display: grid;
+      grid-template: [header] "header" 80% [expand] "descend" 20% / 100%;
+    }
+
+    &-logo {
+      margin-bottom: 2em;
+    }
+    
+    &-header {
+      grid-area: "header";
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(10px + 2vmin);
+      height: 100%;
+    }
+
+    &-descend {
+      grid-area: "descend";
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  
+    &-heading {
+      max-width: 750px;
+    }
+  
+    &-button {
+      &_icon {
+        margin-right: 1em;
+      }
+
+      &_add {
+        border: 1px white solid;
+      }
+    }
+  }
+  
+  .friendList {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0em 3em;
+  
+    &-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

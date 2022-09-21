@@ -1,0 +1,41 @@
+@use './_mixins.scss' as m;
+
+.friendCard {
+  margin: 1em 0em;
+  width: 100%;
+  max-width: 1200px;
+  min-width: 400px;
+  background-color: #878097;
+  overflow: visible;
+
+  &-content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    @include m.md {
+      flex-direction: row;
+    }
+  }
+
+  &-heading {
+    width: 300px;
+  }
+
+  &_rating {
+    // max-width: 500px;
+    // width: auto;
+    flex-basis: auto;
+    @include m.md {
+      flex-basis: 500px;
+    }
+  }
+
+  &_slider {
+    width: 100%;
+  }
+
+  &_label {
+    text-align: end;
+  }
+}
