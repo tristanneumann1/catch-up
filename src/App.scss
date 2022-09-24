@@ -38,6 +38,16 @@
     &-heading {
       max-width: 750px;
     }
+
+    &-winner {
+      margin-top: 1em;  
+      transition: max-height 1.5s ease-in;
+      overflow: hidden;
+      max-height: 0;
+      &.active {
+        max-height: 100vh;
+      }
+    }
   
     &-button {
       &_icon {
@@ -46,6 +56,12 @@
 
       &_add {
         border: 1px white solid;
+      }
+
+      &_profile {
+        position: absolute;
+        top: 1em;
+        left: 1em;
       }
     }
   }
@@ -65,5 +81,11 @@
       align-items: center;
       justify-content: center;
     }
+  }
+
+  .big-icon {
+    color: white;
+    width: 2em;
+    height: 2em;
   }
 }
