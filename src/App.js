@@ -11,10 +11,11 @@ import Dialog from '@mui/material/Dialog';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhone } from '@fortawesome/free-solid-svg-icons'
 import React from 'react';
-import { Link, Typography } from '@mui/material';
+import { CardContent, Link, Typography } from '@mui/material';
 import FriendCard from './FriendCard';
 import Friend from './Friend';
 import Auth from './Auth';
+import { Card } from 'react-bootstrap';
 
 function App() {
   const [friends, updateFriends] = React.useState([
@@ -59,7 +60,7 @@ function App() {
         friendPool.push(friend);
       }
     }
-    
+
     const newWinner = friendPool[Math.floor(Math.random() * friendPool.length)];
     updateWinner(newWinner);
   }
@@ -93,14 +94,17 @@ function App() {
         >
           <PersonIcon className="big-icon" />
         </IconButton>
-        
-        <Dialog
-          keepMounted
-          open={dialogOpen}
-          onClose={() => toggleDialog(false)} width="500px" height="500px"
+        <div
+          className='App-dialog'
+          style={{visibility: dialogOpen ? 'visible' : 'hidden'}}
+          onClick={() => toggleDialog(false)}
         >
-          <Auth />
-        </Dialog>
+          <Card>
+            <CardContent>
+              <Auth />
+            </CardContent>
+          </Card>
+        </div>
       </div>
       <div className='friendList'>
         <div className='friendList-content'>
