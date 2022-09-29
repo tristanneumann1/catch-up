@@ -6,28 +6,125 @@ import IconButton from '@mui/material/IconButton';
 import PersonIcon from '@mui/icons-material/Person';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
-import Dialog from '@mui/material/Dialog';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPhone } from '@fortawesome/free-solid-svg-icons'
 import React from 'react';
-import { CardContent, Link, Typography } from '@mui/material';
+import { Backdrop, CardContent, Link, Typography } from '@mui/material';
 import FriendCard from './FriendCard';
 import Friend from './Friend';
 import Auth from './Auth';
 import { Card } from 'react-bootstrap';
 
+import { auth as firebaseUIAuth } from 'firebaseui';
+import { EmailAuthProvider, getAuth, GoogleAuthProvider, signOut  } from "firebase/auth";
+
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCYuupB1oZ8nngYeEP2Ci2eLtVuSJJzQ4g",
+  authDomain: "catch-up-a1f28.firebaseapp.com",
+  projectId: "catch-up-a1f28",
+  storageBucket: "catch-up-a1f28.appspot.com",
+  messagingSenderId: "278985999867",
+  appId: "1:278985999867:web:0dc30a894c9be8ae00375e",
+  measurementId: "G-1V4NQ30VGJ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const analytics = getAnalytics(app);
+
+const auth = getAuth();
+const ui = new firebaseUIAuth.AuthUI(auth);
+
+var uiConfig = {
+  callbacks: {
+    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+      console.log('signInSuccessWithAuthResult callback: authResult, redirectUrl', authResult, redirectUrl);
+      // User successfully signed in.
+      // Return type determines whether we continue the redirect automatically
+      // or whether we leave that to developer to handle.
+      return true;
+    },
+    uiShown: function() {
+      console.log('uiShown callback')
+      // The widget is rendered.
+      // Hide the loader.
+      // document.getElementById('loader').style.display = 'none';
+    }
+  },
+  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+  signInFlow: 'popup',
+  signInSuccessUrl: '#',
+  signInOptions: [
+    // Leave the lines as is for the providers you want to offer your users.
+    GoogleAuthProvider.PROVIDER_ID,
+    EmailAuthProvider.PROVIDER_ID
+  ],
+  // Terms of service url.
+  tosUrl: '<your-tos-url>',
+  // Privacy policy url.
+  privacyPolicyUrl: '<your-privacy-policy-url>'
+};
+
 function App() {
-  const [friends, updateFriends] = React.useState([
-    new Friend({ name: 'Tristans de 1234567890' }),
-    new Friend({ name: 'Ben Demarcus' })
-  ]);
+  const [friends, updateFriends] = React.useState([]);
 
   const [dialogOpen, toggleDialog] = React.useState(false);
 
   const [winner, updateWinner] = React.useState(null);
 
-  const deleteFriend = (friendToDelete) => {
+  const [appUser, updateUser] = React.useState(null);
+
+  const startAuth = () => {
+  ui.start('#firebaseui-auth-container', uiConfig);
+}
+
+  const signOutAuth = () => {
+    signOut(auth).then(() => {
+      updateUser(null);
+    }).catch((error) => {
+      console.log('signed out error', error);
+    });
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if (user && !appUser) {
+      updateUser(() => user);
+      getFriends(user);
+    }
+  });
+
+  const getFriends = async (user) => {
+    const friendsCollection = collection(db, 'users', user.uid, 'friends');
+    let friendsSnap;
+    try {
+      friendsSnap = await getDocs(friendsCollection);
+    } catch (err) {
+      console.error('error getting friends', err);
+    }
+    if (friendsSnap.size > 0) {
+      updateFriends(friendsSnap.docs.map(friend => {
+        const friendData = friend.data();
+        friendData.id = friend.id;
+        return new Friend(friendData);
+      }));
+    }
+  }
+  const deleteFriend = async (friendToDelete) => {
+    if (appUser) {
+      const friendsRef = doc(db, 'users', appUser.uid, 'friends', friendToDelete.id);
+      try {
+        await deleteDoc(friendsRef);
+      } catch(error) {
+        console.error(error);
+        return
+      }
+    }
     const newFriends = friends.filter(friend => {
       if (friend.id === friendToDelete.id) {
         return false;
@@ -37,10 +134,20 @@ function App() {
     updateFriends(newFriends);
   }
 
-  const updateFriend = (friendId, newFriend) => {
+  const updateFriend = async (friendId, newFriendFields) => {
+    console.log('updating frined', friendId, 'to', newFriendFields);
+    if (appUser) {
+      const friendsRef = doc(db, 'users', appUser.uid, 'friends', friendId);
+      try {
+        await updateDoc(friendsRef, newFriendFields);
+      } catch(error) {
+        console.error(error);
+        return
+      }
+    }
     const newFriends = friends.map(friend => {
       if (friend.id === friendId) {
-        return newFriend;
+        return Object.assign(friend, newFriendFields);
       }
       return friend;
     });
@@ -48,8 +155,21 @@ function App() {
     updateFriends(newFriends);
   };
 
-  const addFriend = () => {
-    const newFriends = [...friends, new Friend()]
+  const addFriend = async () => {
+    const newFriend = new Friend();
+    const newFriends = [...friends, newFriend];
+    if (appUser) {
+      const friendsRef = doc(db, 'users', appUser.uid, 'friends', newFriend.id);
+      try {
+        await setDoc(friendsRef, {
+          name: newFriend.name,
+          rating: newFriend.rating
+        });
+      } catch(error) {
+        console.error(error);
+        return
+      }
+    }
     updateFriends(newFriends);
   }
 
@@ -94,17 +214,21 @@ function App() {
         >
           <PersonIcon className="big-icon" />
         </IconButton>
-        <div
+        <Backdrop
+          open={dialogOpen}
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           className='App-dialog'
-          style={{visibility: dialogOpen ? 'visible' : 'hidden'}}
-          onClick={() => toggleDialog(false)}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleDialog(false)}
+          }
         >
           <Card>
             <CardContent>
-              <Auth />
+              <Auth start={startAuth} signOut={signOutAuth} user={appUser}/>
             </CardContent>
           </Card>
-        </div>
+        </Backdrop>
       </div>
       <div className='friendList'>
         <div className='friendList-content'>

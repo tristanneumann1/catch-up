@@ -12,7 +12,7 @@ const backgroundColors = {
 
 function FriendCard(props) {
   const { friend, update, deleteFriend } = props;
-  const [friendRating, setFriendRating] = React.useState(3);
+  const [friendRating, setFriendRating] = React.useState(friend.rating);
   const [friendName, setFriendName] = React.useState(friend.name);
   const [editMode, setEditMode] = React.useState(false);
 
@@ -36,12 +36,12 @@ function FriendCard(props) {
       deleteFriend(friend);
       return;
     }
-    update(friend.id, friend);
+    update(friend.id, { name: friendName });
   }
 
   function changeRating(_, newRating) {
     setFriendRating(newRating);
-    update(friend.id, friend);
+    update(friend.id, { rating: newRating });
   }
 
   return (
@@ -76,7 +76,7 @@ function FriendCard(props) {
             className="friendCard_slider"
             aria-label="rating"
             onChange={changeRating}
-            defaultValue={3}
+            defaultValue={friendRating}
             valueLabelDisplay="auto"
             step={1}
             marks
