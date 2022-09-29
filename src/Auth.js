@@ -4,11 +4,10 @@ import Button from '@mui/material/Button';
 
 const Auth = ({ start, signOut, user }) => {
   start();
-  console.log('rendering Auth with user', user);
   
   if (user) {
     return (
-      <Button onClick={signOut}>Sign out</Button>
+      <Button variant="contained" onClick={signOut}>Sign out</Button>
     )
   }
   return (

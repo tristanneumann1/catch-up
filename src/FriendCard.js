@@ -3,11 +3,26 @@ import React from 'react';
 import './FriendCard.scss';
 
 const backgroundColors = {
-  1: '#d1bccf',
-  2: '#b28faf',
-  3: '#93628e',
-  4: '#834c7e',
-  5: '#641f5e'
+  // Red Green
+  1: '#EE6055',
+  2: '#ff9b85',
+  3: '#ffd97d',
+  4: '#cbf9b3',
+  5: '#60d394'
+
+  // Brights
+  // 1: '#FF595E',
+  // 2: '#FFCA3A',
+  // 3: '#59FF19', // created out of nowhere (between yellow and green)
+  // 4: '#8AC926',
+  // 5: '#1982C4',
+
+  // pastels
+  // 1: '#FF777B',
+  // 2: '#FDA3A2',
+  // 3: '#EAE4E8', // clashes a little
+  // 4: '#94C6FF',
+  // 5: '#6AA7F7'
 }
 
 function FriendCard(props) {
@@ -46,8 +61,7 @@ function FriendCard(props) {
 
   return (
     <Card className='friendCard' sx={{
-      backgroundColor: backgroundColors[friendRating],
-      color: friendRating > 3 ? 'white' : 'black'
+      backgroundColor: backgroundColors[friendRating]
     }}>
       <CardContent className='friendCard-content'>
         <TextField
@@ -82,6 +96,7 @@ function FriendCard(props) {
             marks
             min={1}
             max={5}
+            color="black"
           />
           <div className='friendCard_label'>Add to the pool {friendRating} times</div>
         </div>

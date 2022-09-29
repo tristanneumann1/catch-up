@@ -94,6 +94,7 @@ function App() {
 
   auth.onAuthStateChanged((user) => {
     if (user && !appUser) {
+      toggleDialog(false);
       updateUser(() => user);
       getFriends(user);
     }
@@ -135,24 +136,23 @@ function App() {
   }
 
   const updateFriend = async (friendId, newFriendFields) => {
-    console.log('updating frined', friendId, 'to', newFriendFields);
-    if (appUser) {
-      const friendsRef = doc(db, 'users', appUser.uid, 'friends', friendId);
-      try {
-        await updateDoc(friendsRef, newFriendFields);
-      } catch(error) {
-        console.error(error);
-        return
-      }
-    }
     const newFriends = friends.map(friend => {
       if (friend.id === friendId) {
         return Object.assign(friend, newFriendFields);
       }
       return friend;
     });
-
     updateFriends(newFriends);
+    if (appUser) {
+      const friendsRef = doc(db, 'users', appUser.uid, 'friends', friendId);
+      try {
+        await updateDoc(friendsRef, newFriendFields);
+      } catch(error) {
+        console.error(error);
+        updateFriends(friends); // revert to how it was before update
+        return
+      }
+    }
   };
 
   const addFriend = async () => {
