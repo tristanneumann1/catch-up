@@ -96,7 +96,7 @@ function FriendCard(props) {
             marks
             min={1}
             max={5}
-            color="black"
+            color="white"
           />
           <div className='friendCard_label'>Add to the pool {friendRating} times</div>
         </div>
