@@ -8,8 +8,6 @@ import TocIcon from '@mui/icons-material/Toc';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPhone } from '@fortawesome/free-solid-svg-icons'
 import React from 'react';
 import { Backdrop, CardContent, Link, Typography } from '@mui/material';
 import FriendCard from './FriendCard';
@@ -197,8 +195,8 @@ function App() {
           <p className='App-heading'>
             Stay in touch with old friends, input all their names, and we'll provide a regular check in contact.
           </p>
-          <Button variant="contained" onClick={randomize}>
-            <FontAwesomeIcon className="App-button_icon" icon={faPhone} /> Give someone a call
+          <Button variant="contained" onClick={randomize} color="white" className='App-button_call'>
+            <b>Give someone a call</b>
           </Button>
           <Typography variant='h5' className={'App-winner' + (winner ? ' active' : '')}>
             &#127881; Today you should call
@@ -206,18 +204,15 @@ function App() {
             &#127881;
           </Typography>
         </header>
-        <Link href="#friendList" className="App-descend">
-          <IconButton aria-label="descend" className='App-button_descend'>
-            <ExpandMoreIcon className="big-icon" />
-          </IconButton>
-        </Link>
-        <IconButton
+        <Button
+          color='white'
+          variant='contained'
           aria-label="profile"
           className='App-button_profile'
           onClick={() => toggleDialog(true)}
         >
           <PersonIcon className="big-icon" />
-        </IconButton>
+        </Button>
         <Backdrop
           open={dialogOpen}
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
