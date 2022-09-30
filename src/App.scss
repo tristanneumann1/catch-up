@@ -74,11 +74,17 @@
   
   .friendList {
     min-height: 100vh;
+    max-width: 1200px;
+    margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0em 3em;
+
+    &-header {
+      width: 100%;
+    }
   
     &-content {
       width: 100%;
@@ -86,6 +92,18 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    &-button_sort {
+      height: 0;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+      top: -4em;
+      & button {
+        height: fit-content;
+      }
     }
   }
 

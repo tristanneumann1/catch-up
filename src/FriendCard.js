@@ -90,7 +90,7 @@ function FriendCard(props) {
             className="friendCard_slider"
             aria-label="rating"
             onChange={changeRating}
-            defaultValue={friendRating}
+            value={friendRating}
             valueLabelDisplay="auto"
             step={1}
             marks

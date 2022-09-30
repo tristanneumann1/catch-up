@@ -4,6 +4,7 @@ import './App.scss';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import PersonIcon from '@mui/icons-material/Person';
+import TocIcon from '@mui/icons-material/Toc';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -21,7 +22,7 @@ import { EmailAuthProvider, getAuth, GoogleAuthProvider, signOut  } from "fireba
 
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCYuupB1oZ8nngYeEP2Ci2eLtVuSJJzQ4g",
@@ -51,7 +52,6 @@ var uiConfig = {
       return true;
     },
     uiShown: function() {
-      console.log('uiShown callback')
       // The widget is rendered.
       // Hide the loader.
       // document.getElementById('loader').style.display = 'none';
@@ -100,6 +100,10 @@ function App() {
     }
   });
 
+  const sortFriends = () => {
+    updateFriends([...friends.sort((friend1, friend2) => friend2.rating - friend1.rating)]);
+  }
+
   const getFriends = async (user) => {
     const friendsCollection = collection(db, 'users', user.uid, 'friends');
     let friendsSnap;
@@ -113,7 +117,7 @@ function App() {
         const friendData = friend.data();
         friendData.id = friend.id;
         return new Friend(friendData);
-      }));
+      }).sort((friend1, friend2) => friend2.rating - friend1.rating));
     }
   }
   const deleteFriend = async (friendToDelete) => {
@@ -232,7 +236,17 @@ function App() {
       </div>
       <div className='friendList'>
         <div className='friendList-content'>
-          <h2 id='friendList'>Friend List</h2>
+          <div className='friendList-header'>
+            <h2 id='friendList'>Friend List</h2>
+            <div className='friendList-button_sort'>
+              <IconButton
+                aria-label="sort"
+                onClick={sortFriends}
+              >
+                <TocIcon className="big-icon" />
+              </IconButton>
+            </div>
+          </div>
           {
             friends.map(friend => {
               return <FriendCard
